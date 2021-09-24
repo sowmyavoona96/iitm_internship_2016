@@ -1,0 +1,926 @@
+
+<!-- saved from url=(0175)http://webcache.googleusercontent.com/search?q=cache:http://cslt.riit.tsinghua.edu.cn/mediawiki/images/c/cb/131104-ivector-microsoft-wj.pdf&gws_rd=cr&ei=9eg-V-67LsW7mgWQuJOYDg -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<style type="text/css">body { margin-left:0;margin-right:0;margin-top:0; }#google-cache-hdr {background:#f5f5f5 !important;font:13px arial,sans-serif !important;text-align:left !important;color:#202020 !important;border:0 !important;margin:0 !important;border-bottom:1px solid #cecece !important;line-height:16px !important ;padding:16px 28px 24px 28px !important;}#google-cache-hdr * {display:inline !important;font:inherit !important;text-align:inherit !important;color:inherit !important;line-height:inherit !important;background:none !important;border:0 !important;margin:0 !important;padding:0 !important;letter-spacing:0 !important;}#google-cache-hdr a {text-decoration:none !important;color:#1a0dab !important;}#google-cache-hdr a:hover { text-decoration:underline !important; }#google-cache-hdr a:visited { color:#609 !important; }#google-cache-hdr div { display:block !important;margin-top:4px !important; }#google-cache-hdr b {font-weight:bold !important;display:inline-block !important;direction:ltr !important;}pre { word-wrap:break-word; }pre { white-space:pre-wrap; }</style></head><body bgcolor="#ffffff" vlink="blue" link="blue"><div id="google-cache-hdr" dir="ltr"><div>This is the html version of the file <a href="http://cslt.riit.tsinghua.edu.cn/mediawiki/images/c/cb/131104-ivector-microsoft-wj.pdf" dir="ltr">http://cslt.riit.tsinghua.edu.cn/mediawiki/images/c/cb/131104-ivector-microsoft-wj.pdf</a>.<br><b>Google</b> automatically generates html versions of documents as we crawl the web.</div></div><div style="position:relative;margin:8px;">
+
+
+
+<meta name="Author" content="Jun Wang (MSR Student-Person Consulting)">
+<meta name="CreationDate" content="D:20140519154036+08&#39;00&#39;">
+<meta name="ModDate" content="D:20140519154036+08&#39;00&#39;">
+<meta name="Producer" content="Microsoft® PowerPoint® 2013">
+<meta name="Creator" content="Microsoft® PowerPoint® 2013">
+<title>A tutorial on speaker verification</title>
+
+<table border="0" width="100%"><tbody><tr><td bgcolor="eeeeee" align="right"><font face="arial,sans-serif"><a name="1"><b>Page 1</b></a></font></td></tr></tbody></table><font size="10" color="#000000" face="Times"><span style="font-size:88px;font-family:Times;color:#000000">
+<div style="position:absolute;top:347;left:261"><nobr>A tutorial on speaker</nobr></div>
+<div style="position:absolute;top:510;left:480"><nobr>verification</nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:34px;font-family:Times;color:#000000">
+<div style="position:absolute;top:788;left:738"><nobr>Student:     Jun Wang            </nobr></div>
+<div style="position:absolute;top:831;left:738"><nobr>Supervisor: Thomas Fang Zheng</nobr></div>
+<div style="position:absolute;top:875;left:738"><nobr>Tsinghua University, 2014,4</nobr></div>
+</span></font>
+
+<div style="position:absolute;top:985;left:0"><hr><table border="0" width="100%"><tbody><tr><td bgcolor="eeeeee" align="right"><font face="arial,sans-serif"><a name="2"><b>Page 2</b></a></font></td></tr></tbody></table></div><font size="7" color="#000000" face="Times"><span style="font-size:52px;font-family:Times;color:#000000">
+<div style="position:absolute;top:1028;left:508"><nobr>Outline</nobr></div>
+</span></font>
+<font size="5" color="#56c5ff" face="Times"><span style="font-size:39px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:1102;left:110"><nobr>• <font color="#000000">Introduction</font></nobr></div>
+<div style="position:absolute;top:1205;left:110"><nobr>• <font color="#000000">GMM-UBM framework of speaker verification</font></nobr></div>
+<div style="position:absolute;top:1308;left:110"><nobr>• <font color="#000000">The ivector methodology of speaker verification</font></nobr></div>
+<div style="position:absolute;top:1410;left:110"><nobr>• <font color="#000000">Intersession compensation and scoring method for ivector</font></nobr></div>
+<div style="position:absolute;top:1513;left:110"><nobr>• <font color="#000000">Toolkits and database</font></nobr></div>
+<div style="position:absolute;top:1615;left:110"><nobr>• <font color="#000000">Some of my previous work</font></nobr></div>
+<div style="position:absolute;top:1718;left:110"><nobr>• <font color="#000000">References  </font></nobr></div>
+</span></font>
+
+<div style="position:absolute;top:1795;left:0"><hr><table border="0" width="100%"><tbody><tr><td bgcolor="eeeeee" align="right"><font face="arial,sans-serif"><a name="3"><b>Page 3</b></a></font></td></tr></tbody></table></div><font size="7" color="#000000" face="Times"><span style="font-size:52px;font-family:Times;color:#000000">
+<div style="position:absolute;top:1843;left:84"><nobr>1 Introduction</nobr></div>
+</span></font>
+<font size="4" color="#56c5ff" face="Times"><span style="font-size:28px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:1948;left:90"><nobr>• <font color="#000000">Speaker recognition is a technique to recognize the identity of a speaker from a</font></nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:28px;font-family:Times;color:#000000">
+<div style="position:absolute;top:1997;left:116"><nobr>speech utterance.</nobr></div>
+</span></font>
+<font size="5" color="#00b0f0" face="Times"><span style="font-size:34px;font-family:Times;color:#00b0f0">
+<div style="position:absolute;top:2209;left:721"><nobr>text dependent</nobr></div>
+<div style="position:absolute;top:2266;left:721"><nobr>text independent</nobr></div>
+<div style="position:absolute;top:2072;left:716"><nobr>spk identification</nobr></div>
+<div style="position:absolute;top:2134;left:716"><nobr>spk verification</nobr></div>
+<div style="position:absolute;top:2354;left:721"><nobr>close set</nobr></div>
+<div style="position:absolute;top:2410;left:721"><nobr>open set</nobr></div>
+<div style="position:absolute;top:2246;left:280"><nobr>spk recognition</nobr></div>
+</span></font>
+<font size="4" color="#56c5ff" face="Times"><span style="font-size:28px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:2460;left:63"><nobr>• <font color="#000000">My research area focus on the open-set, text-independent speaker verification.</font></nobr></div>
+</span></font>
+
+<div style="position:absolute;top:2605;left:0"><hr><table border="0" width="100%"><tbody><tr><td bgcolor="eeeeee" align="right"><font face="arial,sans-serif"><a name="4"><b>Page 4</b></a></font></td></tr></tbody></table></div><font size="5" color="#000000" face="Times"><span style="font-size:34px;font-family:Times;color:#000000">
+<div style="position:absolute;top:2660;left:83"><nobr>A multitude of researches have been conducted to address the following</nobr></div>
+<div style="position:absolute;top:2724;left:83"><nobr>three fields:</nobr></div>
+<div style="position:absolute;top:3036;left:623"><nobr>Pattern matching</nobr></div>
+<div style="position:absolute;top:3161;left:634"><nobr>Scoring method</nobr></div>
+<div style="position:absolute;top:2881;left:698"><nobr>Speech</nobr></div>
+<div style="position:absolute;top:2925;left:624"><nobr>parameterization</nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:28px;font-family:Times;color:#000000">
+<div style="position:absolute;top:3270;left:416"><nobr>fig1 main research fields in speaker recognition</nobr></div>
+</span></font>
+
+<div style="position:absolute;top:3415;left:0"><hr><table border="0" width="100%"><tbody><tr><td bgcolor="eeeeee" align="right"><font face="arial,sans-serif"><a name="5"><b>Page 5</b></a></font></td></tr></tbody></table></div><font size="5" color="#ffc000" face="Times"><span style="font-size:34px;font-family:Times;color:#ffc000">
+<div style="position:absolute;top:3463;left:83"><nobr>Speech parameterization (feature extractor)</nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:20px;font-family:Times;color:#000000">
+<div style="position:absolute;top:3545;left:110"><nobr>Speech parameterization consists in transforming the speech signal to a set of feature vectors. Most of the speech</nobr></div>
+<div style="position:absolute;top:3580;left:83"><nobr>parameterizations used in speaker verification systems relies on a cepstral representation of speech.[F. Bimbot, 2004]</nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:34px;font-family:Times;color:#000000">
+<div style="position:absolute;top:3779;left:1078"><nobr>Mel-</nobr></div>
+<div style="position:absolute;top:3822;left:1040"><nobr>filterbank</nobr></div>
+<div style="position:absolute;top:3779;left:542"><nobr>hamming</nobr></div>
+<div style="position:absolute;top:3822;left:555"><nobr>window</nobr></div>
+<div style="position:absolute;top:3801;left:840"><nobr>FFT</nobr></div>
+<div style="position:absolute;top:3780;left:339"><nobr>Pre-</nobr></div>
+<div style="position:absolute;top:3823;left:299"><nobr>emphasis</nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:25px;font-family:Times;color:#000000">
+<div style="position:absolute;top:3649;left:99"><nobr>Speech signal</nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:34px;font-family:Times;color:#000000">
+<div style="position:absolute;top:3964;left:347"><nobr>log</nobr></div>
+<div style="position:absolute;top:3964;left:581"><nobr>DCT</nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:28px;font-family:Times;color:#000000">
+<div style="position:absolute;top:4087;left:326"><nobr>fig2 modular representation of mfcc feature extractor</nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:34px;font-family:Times;color:#000000">
+<div style="position:absolute;top:3673;left:336"><nobr>VAD</nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:25px;font-family:Times;color:#000000">
+<div style="position:absolute;top:3952;left:1202"><nobr>Feature vector {x</nobr></div>
+</span></font>
+<font size="3" color="#000000" face="Times"><span style="font-size:16px;font-family:Times;color:#000000">
+<div style="position:absolute;top:3965;left:1390"><nobr>i</nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:25px;font-family:Times;color:#000000">
+<div style="position:absolute;top:3952;left:1394"><nobr>}</nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:34px;font-family:Times;color:#000000">
+<div style="position:absolute;top:3964;left:820"><nobr>CMVN</nobr></div>
+<div style="position:absolute;top:3963;left:1037"><nobr>∆        ∆∆</nobr></div>
+</span></font>
+
+<div style="position:absolute;top:4225;left:0"><hr><table border="0" width="100%"><tbody><tr><td bgcolor="eeeeee" align="right"><font face="arial,sans-serif"><a name="6"><b>Page 6</b></a></font></td></tr></tbody></table></div><font size="4" color="#56c5ff" face="Times"><span style="font-size:28px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:4335;left:93"><nobr>• <font color="#ffc000">Main approaches in pattern matching for speaker recognition</font></nobr></div>
+</span></font>
+<font size="5" color="#00b0f0" face="Times"><span style="font-size:34px;font-family:Times;color:#00b0f0">
+<div style="position:absolute;top:4628;left:373"><nobr>Probabilistic model</nobr></div>
+<div style="position:absolute;top:4463;left:373"><nobr>Template matching</nobr></div>
+<div style="position:absolute;top:4784;left:365"><nobr>Artificial Neural Network</nobr></div>
+<div style="position:absolute;top:4622;left:77"><nobr>main approach</nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:28px;font-family:Times;color:#000000">
+<div style="position:absolute;top:4483;left:768"><nobr>Vector quantization [F. Soong, 1985]</nobr></div>
+<div style="position:absolute;top:4560;left:765"><nobr>Gaussian Mixture Model [A. Reynolds, 2003]</nobr></div>
+<div style="position:absolute;top:4621;left:768"><nobr>Joint factor analysis [P. Kenny, 2006]</nobr></div>
+<div style="position:absolute;top:4685;left:767"><nobr>ivector [N. Dehak, 2011 ]</nobr></div>
+<div style="position:absolute;top:4747;left:767"><nobr>time delay neural work [Y. Bennani , 1991 ]</nobr></div>
+<div style="position:absolute;top:4815;left:768"><nobr>decision tree [K. R. Farrell, 1991 ]</nobr></div>
+<div style="position:absolute;top:4416;left:767"><nobr>Nearest neighbor [A. Higgins, 1993]</nobr></div>
+</span></font>
+
+<div style="position:absolute;top:5035;left:0"><hr><table border="0" width="100%"><tbody><tr><td bgcolor="eeeeee" align="right"><font face="arial,sans-serif"><a name="7"><b>Page 7</b></a></font></td></tr></tbody></table></div><font size="7" color="#ffc000" face="Times"><span style="font-size:52px;font-family:Times;color:#ffc000">
+<div style="position:absolute;top:5083;left:84"><nobr>Performance measure</nobr></div>
+</span></font>
+<font size="4" color="#56c5ff" face="Times"><span style="font-size:26px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:5185;left:90"><nobr>• <font color="#000000">For speaker identification:</font></nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:26px;font-family:Times;color:#000000">
+<div style="position:absolute;top:5273;left:378"><nobr>                                =</nobr></div>
+<div style="position:absolute;top:5251;left:637"><nobr>                                                       </nobr></div>
+<div style="position:absolute;top:5292;left:692"><nobr>                                         </nobr></div>
+</span></font>
+<font size="4" color="#56c5ff" face="Times"><span style="font-size:26px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:5351;left:90"><nobr>• <font color="#000000">For speaker verification:</font></nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:26px;font-family:Times;color:#000000">
+<div style="position:absolute;top:5401;left:356"><nobr>                                 =</nobr></div>
+<div style="position:absolute;top:5380;left:618"><nobr>                                                            </nobr></div>
+<div style="position:absolute;top:5421;left:647"><nobr>                                                    </nobr></div>
+<div style="position:absolute;top:5520;left:352"><nobr>                                         =</nobr></div>
+<div style="position:absolute;top:5498;left:678"><nobr>                                                   </nobr></div>
+<div style="position:absolute;top:5539;left:703"><nobr>                                             </nobr></div>
+<div style="position:absolute;top:5622;left:387"><nobr>EER =                                  =                                         </nobr></div>
+<div style="position:absolute;top:5668;left:90"><nobr>Detection error tradeoff (DET) curve is often used to describe the performance.</nobr></div>
+<div style="position:absolute;top:5722;left:90"><nobr>Cost function (C</nobr></div>
+</span></font>
+<font size="3" color="#000000" face="Times"><span style="font-size:17px;font-family:Times;color:#000000">
+<div style="position:absolute;top:5739;left:310"><nobr>DET</nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:26px;font-family:Times;color:#000000">
+<div style="position:absolute;top:5722;left:352"><nobr>) is also defined as a weighted sum of FAR and FRR. [NIST, 2008]</nobr></div>
+</span></font>
+
+<div style="position:absolute;top:5845;left:0"><hr><table border="0" width="100%"><tbody><tr><td bgcolor="eeeeee" align="right"><font face="arial,sans-serif"><a name="8"><b>Page 8</b></a></font></td></tr></tbody></table></div><font size="5" color="#000000" face="Times"><span style="font-size:34px;font-family:Times;color:#000000">
+<div style="position:absolute;top:5900;left:83"><nobr>2 GMM-UBM framework of speaker verification</nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:34px;font-family:Times;color:#000000">
+<div style="position:absolute;top:6053;left:316"><nobr>feature</nobr></div>
+<div style="position:absolute;top:6096;left:302"><nobr>extractor</nobr></div>
+<div style="position:absolute;top:6074;left:556"><nobr>modelling</nobr></div>
+<div style="position:absolute;top:6215;left:747"><nobr>scoring</nobr></div>
+<div style="position:absolute;top:6215;left:1197"><nobr>results</nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:25px;font-family:Times;color:#000000">
+<div style="position:absolute;top:6056;left:131"><nobr>enrollment</nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:28px;font-family:Times;color:#000000">
+<div style="position:absolute;top:6360;left:419"><nobr>fig3 speaker verification framework</nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:34px;font-family:Times;color:#000000">
+<div style="position:absolute;top:6194;left:316"><nobr>feature</nobr></div>
+<div style="position:absolute;top:6237;left:302"><nobr>extractor</nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:25px;font-family:Times;color:#000000">
+<div style="position:absolute;top:6197;left:94"><nobr>test utterance</nobr></div>
+<div style="position:absolute;top:6087;left:869"><nobr>GMM-UBM</nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:28px;font-family:Times;color:#000000">
+<div style="position:absolute;top:6478;left:83"><nobr>Speaker verification[S. Furui, 1981; D. A. Reynolds, 2003]：to verify a speech utterance</nobr></div>
+<div style="position:absolute;top:6532;left:83"><nobr>belongs to a specified enrollment, accept or reject.</nobr></div>
+</span></font>
+
+<div style="position:absolute;top:6655;left:0"><hr><table border="0" width="100%"><tbody><tr><td bgcolor="eeeeee" align="right"><font face="arial,sans-serif"><a name="9"><b>Page 9</b></a></font></td></tr></tbody></table></div><font size="4" color="#56c5ff" face="Times"><span style="font-size:28px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:6750;left:178"><nobr>• <font color="#000000">GMM-UBM framework [D. A. Reynolds, 2000]</font></nobr></div>
+<div style="position:absolute;top:6815;left:205"><nobr>➢<font color="#000000">Gaussian Mixture Model is used to modeling the probability density</font></nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:28px;font-family:Times;color:#000000">
+<div style="position:absolute;top:6857;left:233"><nobr>function of a multi-dimensional feature vector.</nobr></div>
+</span></font>
+<font size="4" color="#56c5ff" face="Times"><span style="font-size:28px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:6927;left:205"><nobr>➢<font color="#000000">Given a speech feature vector X={x</font></nobr></div>
+</span></font>
+<font size="3" color="#000000" face="Times"><span style="font-size:17px;font-family:Times;color:#000000">
+<div style="position:absolute;top:6940;left:743"><nobr>i</nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:28px;font-family:Times;color:#000000">
+<div style="position:absolute;top:6922;left:749"><nobr>} of dimension F, the probability</nobr></div>
+<div style="position:absolute;top:6969;left:233"><nobr>density of x</nobr></div>
+</span></font>
+<font size="3" color="#000000" face="Times"><span style="font-size:17px;font-family:Times;color:#000000">
+<div style="position:absolute;top:6987;left:398"><nobr>i</nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:28px;font-family:Times;color:#000000">
+<div style="position:absolute;top:6969;left:409"><nobr>given a C GMM speaker model    is given by:</nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:34px;font-family:Times;color:#000000">
+<div style="position:absolute;top:7121;left:466"><nobr>     <font style="font-size:24px">  </font></nobr></div>
+<div style="position:absolute;top:7121;left:532"><nobr>|   =</nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:24px;font-family:Times;color:#000000">
+<div style="position:absolute;top:7174;left:625"><nobr>  =1</nobr></div>
+<div style="position:absolute;top:7075;left:640"><nobr>  </nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:34px;font-family:Times;color:#000000">
+<div style="position:absolute;top:7121;left:679"><nobr>  <font style="font-size:24px">  </font></nobr></div>
+<div style="position:absolute;top:7121;left:719"><nobr>     <font style="font-size:24px">  </font></nobr></div>
+<div style="position:absolute;top:7121;left:787"><nobr>,  <font style="font-size:24px">  </font></nobr></div>
+<div style="position:absolute;top:7121;left:836"><nobr>,Σ<font style="font-size:24px">  </font></nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:24px;font-family:Times;color:#000000">
+<div style="position:absolute;top:7357;left:602"><nobr>  =1</nobr></div>
+<div style="position:absolute;top:7257;left:618"><nobr>  </nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:34px;font-family:Times;color:#000000">
+<div style="position:absolute;top:7303;left:657"><nobr>  <font style="font-size:24px">  </font></nobr></div>
+<div style="position:absolute;top:7303;left:707"><nobr>= 1</nobr></div>
+</span></font>
+
+<div style="position:absolute;top:7465;left:0"><hr><table border="0" width="100%"><tbody><tr><td bgcolor="eeeeee" align="right"><font face="arial,sans-serif"><a name="10"><b>Page 10</b></a></font></td></tr></tbody></table></div><font size="5" color="#56c5ff" face="Times"><span style="font-size:34px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:7568;left:178"><nobr>• <font color="#000000">The UBM is trained using EM algorithm and a speaker GMM is</font></nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:34px;font-family:Times;color:#000000">
+<div style="position:absolute;top:7640;left:204"><nobr>estabilished by adjusting the UBM parameters by MAP.</nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:25px;font-family:Times;color:#000000">
+<div style="position:absolute;top:7759;left:904"><nobr>UBM</nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:34px;font-family:Times;color:#000000">
+<div style="position:absolute;top:7747;left:606"><nobr>EM</nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:25px;font-family:Times;color:#000000">
+<div style="position:absolute;top:7975;left:854"><nobr>Speaker GMM</nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:34px;font-family:Times;color:#000000">
+<div style="position:absolute;top:7964;left:594"><nobr>MAP</nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:25px;font-family:Times;color:#000000">
+<div style="position:absolute;top:7726;left:382"><nobr>training data</nobr></div>
+<div style="position:absolute;top:7939;left:348"><nobr>enrollment data</nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:28px;font-family:Times;color:#000000">
+<div style="position:absolute;top:8050;left:424"><nobr>fig4 modeling methods for GMM-UBM </nobr></div>
+</span></font>
+
+<div style="position:absolute;top:8275;left:0"><hr><table border="0" width="100%"><tbody><tr><td bgcolor="eeeeee" align="right"><font face="arial,sans-serif"><a name="11"><b>Page 11</b></a></font></td></tr></tbody></table></div><font size="5" color="#56c5ff" face="Times"><span style="font-size:30px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:8371;left:178"><nobr>• <font color="#000000">From distribution:</font></nobr></div>
+<div style="position:absolute;top:8441;left:205"><nobr>➢<font color="#000000">A speaker utterance is represented by GMM which is adapted</font></nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:30px;font-family:Times;color:#000000">
+<div style="position:absolute;top:8487;left:233"><nobr>from the UBM via MAP.</nobr></div>
+<div style="position:absolute;top:8557;left:633"><nobr>M=m+Dz</nobr></div>
+</span></font>
+<font size="5" color="#56c5ff" face="Times"><span style="font-size:30px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:8631;left:205"><nobr>➢<font color="#000000">UBM m represents all acoustic and phonetic variations in</font></nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:30px;font-family:Times;color:#000000">
+<div style="position:absolute;top:8677;left:233"><nobr>speech data where m is a supervector with dimension CF.</nobr></div>
+</span></font>
+<font size="5" color="#56c5ff" face="Times"><span style="font-size:30px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:8752;left:205"><nobr>➢<font color="#000000">D is diagonal matrix in full space (CF×CF) and z is normally</font></nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:30px;font-family:Times;color:#000000">
+<div style="position:absolute;top:8798;left:233"><nobr>distributed random vector with dimension CF。</nobr></div>
+</span></font>
+<font size="5" color="#56c5ff" face="Times"><span style="font-size:30px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:8873;left:205"><nobr>➢<font color="#000000">M~N(m, DD</font><font color="#000000" style="font-size:19px">T</font><font color="#000000">)。</font></nobr></div>
+</span></font>
+
+<div style="position:absolute;top:9085;left:0"><hr><table border="0" width="100%"><tbody><tr><td bgcolor="eeeeee" align="right"><font face="arial,sans-serif"><a name="12"><b>Page 12</b></a></font></td></tr></tbody></table></div><font size="5" color="#56c5ff" face="Times"><span style="font-size:34px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:9237;left:90"><nobr>• <font color="#000000">Over recent years, ivector has demonstrated state-of-the-art performance</font></nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:34px;font-family:Times;color:#000000">
+<div style="position:absolute;top:9292;left:116"><nobr>for speaker verification.</nobr></div>
+<div style="position:absolute;top:9514;left:529"><nobr>JFA</nobr></div>
+<div style="position:absolute;top:9515;left:716"><nobr>ivector</nobr></div>
+<div style="position:absolute;top:9515;left:1022"><nobr>lda</nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:28px;font-family:Times;color:#000000">
+<div style="position:absolute;top:9716;left:336"><nobr>fig5 ivector methodology for speaker verification</nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:34px;font-family:Times;color:#000000">
+<div style="position:absolute;top:9493;left:240"><nobr>GMM-UBM</nobr></div>
+<div style="position:absolute;top:9536;left:244"><nobr>framework</nobr></div>
+<div style="position:absolute;top:9634;left:1012"><nobr>plda</nobr></div>
+<div style="position:absolute;top:9402;left:997"><nobr>cosine</nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:34px;font-family:Times;color:#000000">
+<div style="position:absolute;top:9140;left:83"><nobr>3 ivector methodology of speaker verification</nobr></div>
+</span></font>
+
+<div style="position:absolute;top:9895;left:0"><hr><table border="0" width="100%"><tbody><tr><td bgcolor="eeeeee" align="right"><font face="arial,sans-serif"><a name="13"><b>Page 13</b></a></font></td></tr></tbody></table></div><font size="5" color="#56c5ff" face="Times"><span style="font-size:37px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:10000;left:178"><nobr>• <font color="#000000">Jonit factor analysis [P. Kenny, 2007]</font></nobr></div>
+<div style="position:absolute;top:10088;left:205"><nobr>➢<font color="#000000">JFA is a model of speaker and session variability in</font></nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:37px;font-family:Times;color:#000000">
+<div style="position:absolute;top:10152;left:233"><nobr>GMMs.</nobr></div>
+<div style="position:absolute;top:10233;left:511"><nobr>   =    +      +      +     </nobr></div>
+</span></font>
+<font size="5" color="#56c5ff" face="Times"><span style="font-size:37px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:10317;left:205"><nobr>➢<font color="#000000">where m is a speaker- and session-independent</font></nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:37px;font-family:Times;color:#000000">
+<div style="position:absolute;top:10381;left:233"><nobr>supervector with CF dimension. (UBM)</nobr></div>
+</span></font>
+<font size="5" color="#56c5ff" face="Times"><span style="font-size:37px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:10475;left:205"><nobr>➢<font color="#000000">M is a speaker- and channel- dependent supervector.</font></nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:37px;font-family:Times;color:#000000">
+<div style="position:absolute;top:10568;left:525"><nobr>   = [⋮]<font style="font-size:26px">    ×1</font></nobr></div>
+<div style="position:absolute;top:10557;left:758"><nobr>M= [⋮]<font style="font-size:26px">    ×1</font></nobr></div>
+</span></font>
+
+<div style="position:absolute;top:10705;left:0"><hr><table border="0" width="100%"><tbody><tr><td bgcolor="eeeeee" align="right"><font face="arial,sans-serif"><a name="14"><b>Page 14</b></a></font></td></tr></tbody></table></div><font size="4" color="#56c5ff" face="Times"><span style="font-size:28px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:10800;left:205"><nobr>➢<font color="#000000">   =    +      +      +     </font></nobr></div>
+<div style="position:absolute;top:10865;left:205"><nobr>➢<font color="#000000">V and D define a speaker subspace, and U defines a session subspace。</font></nobr></div>
+</span></font>
+<font size="6" color="#56c5ff" face="Times"><span style="font-size:41px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:11059;left:205"><nobr>➢<font color="#000000">   =</font></nobr></div>
+</span></font>
+<font size="6" color="#000000" face="Times"><span style="font-size:41px;font-family:Times;color:#000000">
+<div style="position:absolute;top:10985;left:344"><nobr>  <font style="font-size:29px">1</font></nobr></div>
+<div style="position:absolute;top:11037;left:343"><nobr>  <font style="font-size:29px">2</font></nobr></div>
+<div style="position:absolute;top:11087;left:357"><nobr>⋮</nobr></div>
+<div style="position:absolute;top:11138;left:346"><nobr>  <font style="font-size:29px">       ×  </font></nobr></div>
+<div style="position:absolute;top:11064;left:497"><nobr>   =</nobr></div>
+<div style="position:absolute;top:10985;left:603"><nobr>  <font style="font-size:29px">1</font></nobr></div>
+<div style="position:absolute;top:11037;left:603"><nobr>  <font style="font-size:29px">2</font></nobr></div>
+<div style="position:absolute;top:11088;left:620"><nobr>⋮</nobr></div>
+<div style="position:absolute;top:11139;left:603"><nobr>  <font style="font-size:29px">       ×  </font></nobr></div>
+<div style="position:absolute;top:11064;left:778"><nobr>   =</nobr></div>
+<div style="position:absolute;top:11011;left:884"><nobr>Σ<font style="font-size:29px">1</font></nobr></div>
+<div style="position:absolute;top:11011;left:970"><nobr>⋯ 0</nobr></div>
+<div style="position:absolute;top:11062;left:898"><nobr>⋮</nobr></div>
+<div style="position:absolute;top:11062;left:975"><nobr>⋱</nobr></div>
+<div style="position:absolute;top:11062;left:1066"><nobr>⋮</nobr></div>
+<div style="position:absolute;top:11113;left:893"><nobr>0 ⋯ Σ<font style="font-size:29px">       ×    </font></nobr></div>
+</span></font>
+<font size="4" color="#56c5ff" face="Times"><span style="font-size:28px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:11215;left:205"><nobr>➢<font color="#000000">The vector y, z and x are assumed to be a random variable with a</font></nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:28px;font-family:Times;color:#000000">
+<div style="position:absolute;top:11257;left:233"><nobr>normally distribution   (0,  ).</nobr></div>
+</span></font>
+<font size="4" color="#56c5ff" face="Times"><span style="font-size:28px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:11327;left:205"><nobr>➢<font color="#000000">z is a normally distributed CF dimension random vector.</font></nobr></div>
+</span></font>
+
+<div style="position:absolute;top:11515;left:0"><hr><table border="0" width="100%"><tbody><tr><td bgcolor="eeeeee" align="right"><font face="arial,sans-serif"><a name="15"><b>Page 15</b></a></font></td></tr></tbody></table></div><font size="5" color="#56c5ff" face="Times"><span style="font-size:37px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:11620;left:178"><nobr>• <font color="#000000">i-vector [N. Dehak, 2011]</font></nobr></div>
+<div style="position:absolute;top:11708;left:205"><nobr>➢<font color="#000000">make no distinction between speaker effects and</font></nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:37px;font-family:Times;color:#000000">
+<div style="position:absolute;top:11772;left:233"><nobr>session effects in GMM supervector space.</nobr></div>
+</span></font>
+<font size="5" color="#56c5ff" face="Times"><span style="font-size:37px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:11866;left:205"><nobr>➢<font color="#000000">define a total variability space, contains speaker and</font></nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:37px;font-family:Times;color:#000000">
+<div style="position:absolute;top:11930;left:233"><nobr>session variabilities simultaneously.</nobr></div>
+<div style="position:absolute;top:12012;left:574"><nobr>   =    +     </nobr></div>
+</span></font>
+<font size="5" color="#56c5ff" face="Times"><span style="font-size:37px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:12095;left:205"><nobr>➢<font color="#000000">  ~  (  ,    </font><font color="#000000" style="font-size:23px">  </font><font color="#000000">)</font></nobr></div>
+<div style="position:absolute;top:12183;left:205"><nobr>➢<font color="#000000">  ~  (0,  )</font></nobr></div>
+</span></font>
+
+<div style="position:absolute;top:12325;left:0"><hr><table border="0" width="100%"><tbody><tr><td bgcolor="eeeeee" align="right"><font face="arial,sans-serif"><a name="16"><b>Page 16</b></a></font></td></tr></tbody></table></div><font size="5" color="#56c5ff" face="Times"><span style="font-size:37px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:12423;left:205"><nobr>➢<font color="#000000">   =    +     </font></nobr></div>
+<div style="position:absolute;top:12614;left:205"><nobr>➢<font color="#000000">   =</font></nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:37px;font-family:Times;color:#000000">
+<div style="position:absolute;top:12547;left:328"><nobr>  <font style="font-size:26px">1</font></nobr></div>
+<div style="position:absolute;top:12594;left:327"><nobr>  <font style="font-size:26px">2</font></nobr></div>
+<div style="position:absolute;top:12639;left:340"><nobr>⋮</nobr></div>
+<div style="position:absolute;top:12685;left:329"><nobr>  <font style="font-size:26px">       ×  </font></nobr></div>
+<div style="position:absolute;top:12607;left:494"><nobr>,    = [⋮]<font style="font-size:26px">    ×1</font></nobr></div>
+<div style="position:absolute;top:12607;left:724"><nobr>, M= [⋮]<font style="font-size:26px">    ×1</font></nobr></div>
+<div style="position:absolute;top:12607;left:960"><nobr>,    = [⋮]<font style="font-size:26px">  ×1</font></nobr></div>
+</span></font>
+<font size="5" color="#56c5ff" face="Times"><span style="font-size:37px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:12758;left:205"><nobr>➢<font color="#000000">T is a low rank      ×    subspace that contains the</font></nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:37px;font-family:Times;color:#000000">
+<div style="position:absolute;top:12813;left:233"><nobr>eigenvectors with the largest eigenvalues of total</nobr></div>
+<div style="position:absolute;top:12874;left:233"><nobr>variability covariance matrix.</nobr></div>
+</span></font>
+<font size="5" color="#56c5ff" face="Times"><span style="font-size:37px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:12959;left:205"><nobr>➢<font color="#000000">  ~  (0,  )</font></nobr></div>
+</span></font>
+
+<div style="position:absolute;top:13135;left:0"><hr><table border="0" width="100%"><tbody><tr><td bgcolor="eeeeee" align="right"><font face="arial,sans-serif"><a name="17"><b>Page 17</b></a></font></td></tr></tbody></table></div><font size="7" color="#ffc000" face="Times"><span style="font-size:52px;font-family:Times;color:#ffc000">
+<div style="position:absolute;top:13179;left:84"><nobr>Training and testing procedure for ivector</nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:34px;font-family:Times;color:#000000">
+<div style="position:absolute;top:13491;left:383"><nobr>Feature</nobr></div>
+<div style="position:absolute;top:13534;left:373"><nobr>extractor</nobr></div>
+<div style="position:absolute;top:13300;left:660"><nobr>Train UBM</nobr></div>
+<div style="position:absolute;top:13381;left:688"><nobr>Train T</nobr></div>
+<div style="position:absolute;top:13424;left:689"><nobr>matrix</nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:25px;font-family:Times;color:#000000">
+<div style="position:absolute;top:13484;left:159"><nobr>Training speech</nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:34px;font-family:Times;color:#000000">
+<div style="position:absolute;top:13632;left:661"><nobr>Extractor</nobr></div>
+<div style="position:absolute;top:13676;left:679"><nobr>ivector</nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:28px;font-family:Times;color:#000000">
+<div style="position:absolute;top:13879;left:423"><nobr>fig6 training and testing procedure for i-vector</nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:34px;font-family:Times;color:#000000">
+<div style="position:absolute;top:13633;left:380"><nobr>Feature</nobr></div>
+<div style="position:absolute;top:13676;left:370"><nobr>extractor</nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:25px;font-family:Times;color:#000000">
+<div style="position:absolute;top:13621;left:114"><nobr>Enrollment speech</nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:34px;font-family:Times;color:#000000">
+<div style="position:absolute;top:13763;left:380"><nobr>Feature</nobr></div>
+<div style="position:absolute;top:13806;left:369"><nobr>extractor</nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:25px;font-family:Times;color:#000000">
+<div style="position:absolute;top:13757;left:229"><nobr>test speech</nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:34px;font-family:Times;color:#000000">
+<div style="position:absolute;top:13632;left:948"><nobr>Enrollment</nobr></div>
+<div style="position:absolute;top:13675;left:980"><nobr>ivector</nobr></div>
+<div style="position:absolute;top:13766;left:1001"><nobr>Test</nobr></div>
+<div style="position:absolute;top:13810;left:981"><nobr>ivector</nobr></div>
+<div style="position:absolute;top:13496;left:972"><nobr>Training</nobr></div>
+<div style="position:absolute;top:13539;left:925"><nobr>speech ivector</nobr></div>
+</span></font>
+
+<div style="position:absolute;top:13945;left:0"><hr><table border="0" width="100%"><tbody><tr><td bgcolor="eeeeee" align="right"><font face="arial,sans-serif"><a name="18"><b>Page 18</b></a></font></td></tr></tbody></table></div><font size="5" color="#56c5ff" face="Times"><span style="font-size:39px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:14047;left:178"><nobr>• <font color="#ffc000">Object function</font></nobr></div>
+<div style="position:absolute;top:14136;left:205"><nobr>➢<font color="#000000">   =    +     </font></nobr></div>
+<div style="position:absolute;top:14225;left:205"><nobr>➢<font color="#000000">  ~  (  ,    </font><font color="#000000" style="font-size:26px">  </font><font color="#000000">)</font></nobr></div>
+<div style="position:absolute;top:14313;left:205"><nobr>➢<font color="#000000">Suppose   </font><font color="#000000" style="font-size:28px">  </font></nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:39px;font-family:Times;color:#000000">
+<div style="position:absolute;top:14318;left:460"><nobr>~  (  ,Σ),   <font style="font-size:28px">  </font></nobr></div>
+<div style="position:absolute;top:14318;left:702"><nobr>=    +      +   </nobr></div>
+</span></font>
+<font size="5" color="#56c5ff" face="Times"><span style="font-size:39px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:14404;left:205"><nobr>➢<font color="#000000">For Gaussian Mixture Model,   </font><font color="#000000" style="font-size:28px">  ,  </font></nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:39px;font-family:Times;color:#000000">
+<div style="position:absolute;top:14409;left:897"><nobr>=   <font style="font-size:28px">  </font></nobr></div>
+<div style="position:absolute;top:14409;left:1003"><nobr>+   <font style="font-size:28px">  </font></nobr></div>
+<div style="position:absolute;top:14409;left:1081"><nobr>   +   <font style="font-size:28px">  </font></nobr></div>
+</span></font>
+<font size="5" color="#56c5ff" face="Times"><span style="font-size:39px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:14493;left:205"><nobr>➢<font color="#000000">ℒ~     </font><font color="#000000" style="font-size:28px">  </font></nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:39px;font-family:Times;color:#000000">
+<div style="position:absolute;top:14498;left:372"><nobr>|  </nobr></div>
+</span></font>
+<font size="5" color="#56c5ff" face="Times"><span style="font-size:39px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:14589;left:205"><nobr>➢<font color="#000000">Define object function: ℒ = </font><font color="#000000" style="font-size:28px">  </font></nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:39px;font-family:Times;color:#000000">
+<div style="position:absolute;top:14594;left:848"><nobr>     <font style="font-size:28px">  ,  </font></nobr></div>
+<div style="position:absolute;top:14594;left:949"><nobr>|  </nobr></div>
+</span></font>
+
+<div style="position:absolute;top:14755;left:0"><hr><table border="0" width="100%"><tbody><tr><td bgcolor="eeeeee" align="right"><font face="arial,sans-serif"><a name="19"><b>Page 19</b></a></font></td></tr></tbody></table></div><font size="5" color="#56c5ff" face="Times"><span style="font-size:39px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:14861;left:178"><nobr>• <font color="#ffc000">i-vector extraction [N. Dehak, 2011]</font></nobr></div>
+</span></font>
+<font size="5" color="#56c5ff" face="Times"><span style="font-size:34px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:14952;left:205"><nobr>➢<font color="#000000">The Baum Welch statistics needed to estimate a given</font></nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:34px;font-family:Times;color:#000000">
+<div style="position:absolute;top:15011;left:233"><nobr>speech utterance:</nobr></div>
+</span></font>
+<font size="5" color="#56c5ff" face="Times"><span style="font-size:39px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:15102;left:205"><nobr>➢<font color="#000000">  </font><font color="#000000" style="font-size:28px">  </font></nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:39px;font-family:Times;color:#000000">
+<div style="position:absolute;top:15107;left:296"><nobr>= <font style="font-size:28px">  </font></nobr></div>
+<div style="position:absolute;top:15107;left:390"><nobr>  (  |  <font style="font-size:28px">  </font></nobr></div>
+<div style="position:absolute;top:15107;left:507"><nobr>)</nobr></div>
+</span></font>
+<font size="5" color="#56c5ff" face="Times"><span style="font-size:39px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:15196;left:205"><nobr>➢<font color="#000000">  </font><font color="#000000" style="font-size:28px">  </font></nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:28px;font-family:Times;color:#000000">
+<div style="position:absolute;top:15195;left:266"><nobr>′</nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:39px;font-family:Times;color:#000000">
+<div style="position:absolute;top:15201;left:290"><nobr>= <font style="font-size:28px">  </font></nobr></div>
+<div style="position:absolute;top:15201;left:384"><nobr>  (  |  <font style="font-size:28px">  </font></nobr></div>
+<div style="position:absolute;top:15201;left:501"><nobr>)  <font style="font-size:28px">  </font></nobr></div>
+</span></font>
+<font size="5" color="#56c5ff" face="Times"><span style="font-size:39px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:15290;left:205"><nobr>➢<font color="#000000">  </font><font color="#000000" style="font-size:28px">  </font></nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:39px;font-family:Times;color:#000000">
+<div style="position:absolute;top:15295;left:286"><nobr>= <font style="font-size:28px">  </font></nobr></div>
+<div style="position:absolute;top:15295;left:380"><nobr>  (  |  <font style="font-size:28px">  </font></nobr></div>
+<div style="position:absolute;top:15295;left:497"><nobr>)(  <font style="font-size:28px">  </font></nobr></div>
+<div style="position:absolute;top:15295;left:579"><nobr>−   <font style="font-size:28px">  </font></nobr></div>
+<div style="position:absolute;top:15295;left:673"><nobr>)</nobr></div>
+</span></font>
+
+<div style="position:absolute;top:15565;left:0"><hr><table border="0" width="100%"><tbody><tr><td bgcolor="eeeeee" align="right"><font face="arial,sans-serif"><a name="20"><b>Page 20</b></a></font></td></tr></tbody></table></div><font size="5" color="#56c5ff" face="Times"><span style="font-size:39px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:15671;left:178"><nobr>• <font color="#ffc000">i-vector extraction [N. Dehak, 2011]</font></nobr></div>
+</span></font>
+<font size="5" color="#56c5ff" face="Times"><span style="font-size:34px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:15762;left:205"><nobr>➢<font color="#000000">The ivector of a speech segment X is computed as the</font></nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:34px;font-family:Times;color:#000000">
+<div style="position:absolute;top:15821;left:233"><nobr>mean of the posterior probability P(w|X).</nobr></div>
+</span></font>
+<font size="5" color="#56c5ff" face="Times"><span style="font-size:39px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:15912;left:205"><nobr>➢<font color="#000000">         ~  (   ,Ξ)</font></nobr></div>
+<div style="position:absolute;top:16006;left:205"><nobr>➢<font color="#000000">   = Ξ  </font></nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:28px;font-family:Times;color:#000000">
+<div style="position:absolute;top:16005;left:377"><nobr>  </nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:39px;font-family:Times;color:#000000">
+<div style="position:absolute;top:16011;left:398"><nobr>Σ</nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:28px;font-family:Times;color:#000000">
+<div style="position:absolute;top:16005;left:423"><nobr>−1</nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:39px;font-family:Times;color:#000000">
+<div style="position:absolute;top:16011;left:464"><nobr>  </nobr></div>
+</span></font>
+<font size="5" color="#56c5ff" face="Times"><span style="font-size:39px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:16100;left:205"><nobr>➢<font color="#000000">Ξ = (   + </font><font color="#000000" style="font-size:28px">  </font></nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:39px;font-family:Times;color:#000000">
+<div style="position:absolute;top:16105;left:455"><nobr>  <font style="font-size:28px">  </font></nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:28px;font-family:Times;color:#000000">
+<div style="position:absolute;top:16098;left:482"><nobr>  </nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:39px;font-family:Times;color:#000000">
+<div style="position:absolute;top:16105;left:504"><nobr>Σ<font style="font-size:28px">  </font></nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:28px;font-family:Times;color:#000000">
+<div style="position:absolute;top:16098;left:528"><nobr>−1</nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:39px;font-family:Times;color:#000000">
+<div style="position:absolute;top:16105;left:570"><nobr>  <font style="font-size:28px">  </font></nobr></div>
+<div style="position:absolute;top:16105;left:616"><nobr>  <font style="font-size:28px">  </font></nobr></div>
+<div style="position:absolute;top:16105;left:653"><nobr>)</nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:28px;font-family:Times;color:#000000">
+<div style="position:absolute;top:16098;left:671"><nobr>−1</nobr></div>
+</span></font>
+
+<div style="position:absolute;top:16375;left:0"><hr><table border="0" width="100%"><tbody><tr><td bgcolor="eeeeee" align="right"><font face="arial,sans-serif"><a name="21"><b>Page 21</b></a></font></td></tr></tbody></table></div><font size="5" color="#56c5ff" face="Times"><span style="font-size:39px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:16481;left:178"><nobr>• <font color="#ffc000">T matrix training [N. Dehak, 2011]</font></nobr></div>
+<div style="position:absolute;top:16575;left:205"><nobr>➢<font color="#000000">T matrix can be trained by an EM procedure.</font></nobr></div>
+<div style="position:absolute;top:16659;left:259"><nobr>➢<font color="#000000">E steps computes the posterior probability P(w|X).</font></nobr></div>
+<div style="position:absolute;top:16744;left:259"><nobr>➢<font color="#000000">M step optimizes T by updating following formula:</font></nobr></div>
+<div style="position:absolute;top:16829;left:259"><nobr>➢<font color="#000000">  </font><font color="#000000" style="font-size:28px">  </font></nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:39px;font-family:Times;color:#000000">
+<div style="position:absolute;top:16834;left:341"><nobr>= ( <font style="font-size:28px">  </font></nobr></div>
+<div style="position:absolute;top:16834;left:459"><nobr>  <font style="font-size:28px">  </font></nobr></div>
+<div style="position:absolute;top:16834;left:494"><nobr>(  )   </nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:28px;font-family:Times;color:#000000">
+<div style="position:absolute;top:16827;left:588"><nobr>  </nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:39px;font-family:Times;color:#000000">
+<div style="position:absolute;top:16834;left:609"><nobr>)( <font style="font-size:28px">  </font></nobr></div>
+<div style="position:absolute;top:16834;left:702"><nobr>  <font style="font-size:28px">  </font></nobr></div>
+<div style="position:absolute;top:16834;left:747"><nobr>(  )(      </nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:28px;font-family:Times;color:#000000">
+<div style="position:absolute;top:16827;left:890"><nobr>  </nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:39px;font-family:Times;color:#000000">
+<div style="position:absolute;top:16834;left:921"><nobr>+ Ξ)</nobr></div>
+</span></font>
+
+<div style="position:absolute;top:17185;left:0"><hr><table border="0" width="100%"><tbody><tr><td bgcolor="eeeeee" align="right"><font face="arial,sans-serif"><a name="22"><b>Page 22</b></a></font></td></tr></tbody></table></div><font size="5" color="#56c5ff" face="Times"><span style="font-size:39px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:17291;left:178"><nobr>• <font color="#ffc000">T matrix training [N. Dehak, 2011]</font></nobr></div>
+<div style="position:absolute;top:17376;left:259"><nobr>➢<font color="#000000">  </font><font color="#000000" style="font-size:28px">  </font></nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:39px;font-family:Times;color:#000000">
+<div style="position:absolute;top:17381;left:341"><nobr>= ( <font style="font-size:28px">  </font></nobr></div>
+<div style="position:absolute;top:17381;left:459"><nobr>  <font style="font-size:28px">  </font></nobr></div>
+<div style="position:absolute;top:17381;left:494"><nobr>(  )   </nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:28px;font-family:Times;color:#000000">
+<div style="position:absolute;top:17374;left:588"><nobr>  </nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:39px;font-family:Times;color:#000000">
+<div style="position:absolute;top:17381;left:609"><nobr>)( <font style="font-size:28px">  </font></nobr></div>
+<div style="position:absolute;top:17381;left:702"><nobr>  <font style="font-size:28px">  </font></nobr></div>
+<div style="position:absolute;top:17381;left:747"><nobr>(  )(      </nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:28px;font-family:Times;color:#000000">
+<div style="position:absolute;top:17374;left:890"><nobr>  </nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:39px;font-family:Times;color:#000000">
+<div style="position:absolute;top:17381;left:921"><nobr>+ Ξ)</nobr></div>
+</span></font>
+<font size="5" color="#56c5ff" face="Times"><span style="font-size:39px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:17613;left:259"><nobr>➢<font color="#000000">  </font><font color="#000000" style="font-size:28px">  </font></nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:39px;font-family:Times;color:#000000">
+<div style="position:absolute;top:17618;left:341"><nobr>=</nobr></div>
+<div style="position:absolute;top:17539;left:401"><nobr>…</nobr></div>
+<div style="position:absolute;top:17589;left:401"><nobr>…</nobr></div>
+<div style="position:absolute;top:17629;left:410"><nobr>⋮</nobr></div>
+<div style="position:absolute;top:17678;left:401"><nobr>…</nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:28px;font-family:Times;color:#000000">
+<div style="position:absolute;top:17699;left:450"><nobr>  ×  </nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:39px;font-family:Times;color:#000000">
+<div style="position:absolute;top:17618;left:531"><nobr>   =</nobr></div>
+<div style="position:absolute;top:17542;left:631"><nobr>  <font style="font-size:28px">1</font></nobr></div>
+<div style="position:absolute;top:17592;left:630"><nobr>  <font style="font-size:28px">2</font></nobr></div>
+<div style="position:absolute;top:17641;left:644"><nobr>⋮</nobr></div>
+<div style="position:absolute;top:17690;left:629"><nobr>  <font style="font-size:28px">       ×  </font></nobr></div>
+</span></font>
+
+<div style="position:absolute;top:17995;left:0"><hr><table border="0" width="100%"><tbody><tr><td bgcolor="eeeeee" align="right"><font face="arial,sans-serif"><a name="23"><b>Page 23</b></a></font></td></tr></tbody></table></div><font size="5" color="#000000" face="Times"><span style="font-size:39px;font-family:Times;color:#000000">
+<div style="position:absolute;top:18054;left:84"><nobr>4 Intersession compensation and scoring method for ivector</nobr></div>
+</span></font>
+<font size="5" color="#ffc000" face="Times"><span style="font-size:34px;font-family:Times;color:#ffc000">
+<div style="position:absolute;top:18415;left:226"><nobr><b>i-vector</b></nobr></div>
+<div style="position:absolute;top:18160;left:513"><nobr><b>WCCN</b></nobr></div>
+<div style="position:absolute;top:18263;left:530"><nobr><b>LDA</b></nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:34px;font-family:Times;color:#000000">
+<div style="position:absolute;top:18563;left:535"><nobr><b>EFR</b></nobr></div>
+</span></font>
+<font size="5" color="#ffc000" face="Times"><span style="font-size:34px;font-family:Times;color:#ffc000">
+<div style="position:absolute;top:18238;left:867"><nobr><b>Cosine distance</b></nobr></div>
+<div style="position:absolute;top:18281;left:932"><nobr><b>scoring</b></nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:25px;font-family:Times;color:#000000">
+<div style="position:absolute;top:18390;left:60"><nobr>feature</nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:34px;font-family:Times;color:#000000">
+<div style="position:absolute;top:18460;left:531"><nobr><b>NAP</b></nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:28px;font-family:Times;color:#000000">
+<div style="position:absolute;top:18738;left:280"><nobr>fig7 intersession compensation and scoring method for ivector</nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:34px;font-family:Times;color:#000000">
+<div style="position:absolute;top:18662;left:495"><nobr><b>sphNorm</b></nobr></div>
+</span></font>
+<font size="5" color="#ffc000" face="Times"><span style="font-size:34px;font-family:Times;color:#ffc000">
+<div style="position:absolute;top:18356;left:521"><nobr><b>PLDA</b></nobr></div>
+<div style="position:absolute;top:18523;left:879"><nobr><b>PLDA scoring</b></nobr></div>
+</span></font>
+
+<div style="position:absolute;top:18805;left:0"><hr><table border="0" width="100%"><tbody><tr><td bgcolor="eeeeee" align="right"><font face="arial,sans-serif"><a name="24"><b>Page 24</b></a></font></td></tr></tbody></table></div><font size="5" color="#56c5ff" face="Times"><span style="font-size:39px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:18885;left:42"><nobr>• <font color="#ffc000">Cosine distance [N. Dehak, 2009]</font></nobr></div>
+<div style="position:absolute;top:18979;left:69"><nobr>➢<font color="#000000">Using cosine kernel between the target speaker ivector and</font></nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:39px;font-family:Times;color:#000000">
+<div style="position:absolute;top:19048;left:96"><nobr>test speaker ivector.</nobr></div>
+</span></font>
+
+<div style="position:absolute;top:19615;left:0"><hr><table border="0" width="100%"><tbody><tr><td bgcolor="eeeeee" align="right"><font face="arial,sans-serif"><a name="25"><b>Page 25</b></a></font></td></tr></tbody></table></div><font size="5" color="#56c5ff" face="Times"><span style="font-size:39px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:19721;left:178"><nobr>• <font color="#ffc000">WCCN [A. Hatch, 2006]</font></nobr></div>
+<div style="position:absolute;top:19815;left:205"><nobr>➢<font color="#000000">to minimize the classification error.</font></nobr></div>
+</span></font>
+<font size="6" color="#000000" face="Times"><span style="font-size:46px;font-family:Times;color:#000000">
+<div style="position:absolute;top:19996;left:604"><nobr>  </nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:33px;font-family:Times;color:#000000">
+<div style="position:absolute;top:19988;left:652"><nobr>−1</nobr></div>
+</span></font>
+<font size="6" color="#000000" face="Times"><span style="font-size:46px;font-family:Times;color:#000000">
+<div style="position:absolute;top:19996;left:714"><nobr>=     </nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:33px;font-family:Times;color:#000000">
+<div style="position:absolute;top:19988;left:828"><nobr>  </nobr></div>
+</span></font>
+
+<div style="position:absolute;top:20425;left:0"><hr><table border="0" width="100%"><tbody><tr><td bgcolor="eeeeee" align="right"><font face="arial,sans-serif"><a name="26"><b>Page 26</b></a></font></td></tr></tbody></table></div><font size="5" color="#56c5ff" face="Times"><span style="font-size:39px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:20505;left:42"><nobr>• <font color="#ffc000">LDA [K. Fukunaga, 1990; N. Dehak, 2009]</font></nobr></div>
+<div style="position:absolute;top:20599;left:69"><nobr>➢<font color="#000000">to seek new orthogonal axes to better discriminate different</font></nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:39px;font-family:Times;color:#000000">
+<div style="position:absolute;top:20668;left:96"><nobr>classes.</nobr></div>
+</span></font>
+<font size="5" color="#56c5ff" face="Times"><span style="font-size:39px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:20769;left:69"><nobr>➢<font color="#000000">a linear transformation that maximizes the between-class</font></nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:39px;font-family:Times;color:#000000">
+<div style="position:absolute;top:20838;left:96"><nobr>variation while minimizing the within-class variances.</nobr></div>
+</span></font>
+<font size="5" color="#56c5ff" face="Times"><span style="font-size:39px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:20938;left:69"><nobr>➢<font color="#000000">fisher criterion is used for this purpose.</font></nobr></div>
+</span></font>
+
+<div style="position:absolute;top:21235;left:0"><hr><table border="0" width="100%"><tbody><tr><td bgcolor="eeeeee" align="right"><font face="arial,sans-serif"><a name="27"><b>Page 27</b></a></font></td></tr></tbody></table></div><font size="5" color="#56c5ff" face="Times"><span style="font-size:39px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:21315;left:42"><nobr>• <font color="#ffc000">LDA [K. Fukunaga, 1990; N. Dehak, 2009]</font></nobr></div>
+</span></font>
+<font size="5" color="#56c5ff" face="Times"><span style="font-size:34px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:21407;left:69"><nobr>➢<font color="#000000">  </font><font color="#000000" style="font-size:24px">  </font></nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:34px;font-family:Times;color:#000000">
+<div style="position:absolute;top:21401;left:145"><nobr>is between-class covariance matrix, and   <font style="font-size:24px">  </font></nobr></div>
+<div style="position:absolute;top:21401;left:994"><nobr>is the within-class</nobr></div>
+<div style="position:absolute;top:21466;left:96"><nobr>covariance matrix. The solution    is generalized eigenvectors.</nobr></div>
+</span></font>
+
+<div style="position:absolute;top:22045;left:0"><hr><table border="0" width="100%"><tbody><tr><td bgcolor="eeeeee" align="right"><font face="arial,sans-serif"><a name="28"><b>Page 28</b></a></font></td></tr></tbody></table></div><font size="5" color="#56c5ff" face="Times"><span style="font-size:34px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:22120;left:42"><nobr>• <font color="#ffc000">PLDA [S. J. D. Prince, 2007]</font></nobr></div>
+<div style="position:absolute;top:22198;left:69"><nobr>➢<font color="#000000">Technically, assuming a factor analysis (FA) model of the i-vectors of the</font></nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:34px;font-family:Times;color:#000000">
+<div style="position:absolute;top:22253;left:96"><nobr>form:</nobr></div>
+<div style="position:absolute;top:22342;left:221"><nobr>w =    +   ℎ +      +    ,in practice G always equals to zero</nobr></div>
+</span></font>
+<font size="5" color="#56c5ff" face="Times"><span style="font-size:35px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:22416;left:69"><nobr>➢<font color="#000000">First computes the maximum likelihood estimate (MLE) of the factor</font></nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:35px;font-family:Times;color:#000000">
+<div style="position:absolute;top:22473;left:96"><nobr>loading matrix F (the Eigenvoice subspace).</nobr></div>
+</span></font>
+<font size="5" color="#56c5ff" face="Times"><span style="font-size:35px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:22563;left:69"><nobr>➢<font color="#000000">Here, w is the i-vector, </font><font color="#000000" style="font-size:38px">   </font><font color="#000000">is the mean of training i-vectors, and</font></nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:35px;font-family:Times;color:#000000">
+<div style="position:absolute;top:22631;left:96"><nobr>h~  (  ,  ) is a vector of latent factors. The full covariance residual</nobr></div>
+<div style="position:absolute;top:22686;left:96"><nobr>noise term <font style="font-size:38px">   </font>explains the variability not captured through the latent</nobr></div>
+<div style="position:absolute;top:22750;left:96"><nobr>variables.</nobr></div>
+</span></font>
+
+<div style="position:absolute;top:22855;left:0"><hr><table border="0" width="100%"><tbody><tr><td bgcolor="eeeeee" align="right"><font face="arial,sans-serif"><a name="29"><b>Page 29</b></a></font></td></tr></tbody></table></div><font size="5" color="#56c5ff" face="Times"><span style="font-size:39px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:22935;left:42"><nobr>• <font color="#ffc000">PLDA [S. J. D. Prince, 2007]</font></nobr></div>
+</span></font>
+<font size="5" color="#56c5ff" face="Times"><span style="font-size:34px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:23027;left:69"><nobr>➢<font color="#000000">Given a pair of ivectors D={w</font></nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:21px;font-family:Times;color:#000000">
+<div style="position:absolute;top:23042;left:601"><nobr>1</nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:34px;font-family:Times;color:#000000">
+<div style="position:absolute;top:23021;left:615"><nobr>,w</nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:21px;font-family:Times;color:#000000">
+<div style="position:absolute;top:23042;left:652"><nobr>2</nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:34px;font-family:Times;color:#000000">
+<div style="position:absolute;top:23021;left:666"><nobr>},   <font style="font-size:24px">1</font></nobr></div>
+<div style="position:absolute;top:23021;left:750"><nobr>means two vectors from the same</nobr></div>
+<div style="position:absolute;top:23086;left:96"><nobr>speaker and   <font style="font-size:24px">0</font></nobr></div>
+<div style="position:absolute;top:23086;left:390"><nobr>means two vectors from different speakers.[P. Kenny,</nobr></div>
+<div style="position:absolute;top:23150;left:96"><nobr>2010]</nobr></div>
+</span></font>
+<font size="5" color="#56c5ff" face="Times"><span style="font-size:34px;font-family:Times;color:#56c5ff">
+<div style="position:absolute;top:23239;left:69"><nobr>➢<font color="#000000">the verification score is computed for all possible model-test i-vector</font></nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:34px;font-family:Times;color:#000000">
+<div style="position:absolute;top:23298;left:96"><nobr>trials. The scores are computed as the log-likelihood ratio between the</nobr></div>
+<div style="position:absolute;top:23363;left:96"><nobr>same (  <font style="font-size:24px">1</font></nobr></div>
+<div style="position:absolute;top:23363;left:250"><nobr>) versus different (  <font style="font-size:24px">0</font></nobr></div>
+<div style="position:absolute;top:23363;left:603"><nobr>) speaker models hypotheses:</nobr></div>
+<div style="position:absolute;top:23442;left:468"><nobr>       = ln</nobr></div>
+<div style="position:absolute;top:23415;left:658"><nobr>     <font style="font-size:24px">1</font></nobr></div>
+<div style="position:absolute;top:23415;left:738"><nobr>,  |  <font style="font-size:24px">1</font></nobr></div>
+<div style="position:absolute;top:23466;left:592"><nobr>     <font style="font-size:24px">1</font></nobr></div>
+<div style="position:absolute;top:23466;left:671"><nobr>|  <font style="font-size:24px">0</font></nobr></div>
+<div style="position:absolute;top:23466;left:746"><nobr>∙      <font style="font-size:24px">2</font></nobr></div>
+<div style="position:absolute;top:23466;left:845"><nobr>|  <font style="font-size:24px">0</font></nobr></div>
+</span></font>
+
+<div style="position:absolute;top:23665;left:0"><hr><table border="0" width="100%"><tbody><tr><td bgcolor="eeeeee" align="right"><font face="arial,sans-serif"><a name="30"><b>Page 30</b></a></font></td></tr></tbody></table></div><font size="7" color="#000000" face="Times"><span style="font-size:52px;font-family:Times;color:#000000">
+<div style="position:absolute;top:23751;left:38"><nobr>5 Toolkits and database</nobr></div>
+</span></font>
+<font size="3" face="Times"><span style="font-size:12px;font-family:Times">
+<div style="position:absolute;top:24428;left:191"><nobr>30</nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:34px;font-family:Times;color:#000000">
+<div style="position:absolute;top:23879;left:118"><nobr>● Kaldi toolkits [D. Povey, 2011]</nobr></div>
+<div style="position:absolute;top:23944;left:118"><nobr>● database:</nobr></div>
+<div style="position:absolute;top:24003;left:167"><nobr>trials: NIST SRE08 female core test, contains 1997 females, 59343</nobr></div>
+<div style="position:absolute;top:24068;left:118"><nobr>trails.</nobr></div>
+<div style="position:absolute;top:24133;left:167"><nobr>lda/plda training data: fisher English database, contains 7196</nobr></div>
+<div style="position:absolute;top:24197;left:118"><nobr>females, 13827 sessions.</nobr></div>
+<div style="position:absolute;top:24262;left:167"><nobr>UBM training data: fisher English database, 6000 sessions female</nobr></div>
+<div style="position:absolute;top:24327;left:118"><nobr>speech data.</nobr></div>
+</span></font>
+
+<div style="position:absolute;top:24475;left:0"><hr><table border="0" width="100%"><tbody><tr><td bgcolor="eeeeee" align="right"><font face="arial,sans-serif"><a name="31"><b>Page 31</b></a></font></td></tr></tbody></table></div><font size="3" face="Times"><span style="font-size:12px;font-family:Times">
+<div style="position:absolute;top:25238;left:191"><nobr>31</nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:34px;font-family:Times;color:#000000">
+<div style="position:absolute;top:24595;left:101"><nobr>● setup:</nobr></div>
+<div style="position:absolute;top:24655;left:150"><nobr>mfcc features, extracting with 20ms hamming window, every</nobr></div>
+<div style="position:absolute;top:24719;left:101"><nobr>10ms, 19 mel-frequency cepstral coefficient together with log</nobr></div>
+<div style="position:absolute;top:24784;left:101"><nobr>energy were used. Delta and delta-delta coefficient were then</nobr></div>
+<div style="position:absolute;top:24849;left:101"><nobr>calculated to produce 60-dimensional feature vector.</nobr></div>
+<div style="position:absolute;top:24914;left:150"><nobr>2048 Gaussian Mixtures, gender-dependent.</nobr></div>
+<div style="position:absolute;top:24979;left:150"><nobr>400-dimensional ivector.</nobr></div>
+<div style="position:absolute;top:25043;left:150"><nobr>150-dimensional lda/plda.</nobr></div>
+</span></font>
+
+<div style="position:absolute;top:25285;left:0"><hr><table border="0" width="100%"><tbody><tr><td bgcolor="eeeeee" align="right"><font face="arial,sans-serif"><a name="32"><b>Page 32</b></a></font></td></tr></tbody></table></div><font size="3" face="Times"><span style="font-size:12px;font-family:Times">
+<div style="position:absolute;top:26048;left:191"><nobr>32</nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:34px;font-family:Times;color:#000000">
+<div style="position:absolute;top:25363;left:93"><nobr>● SRE 8 results with kaldi: core test, female</nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:28px;font-family:Times;color:#000000">
+<div style="position:absolute;top:25437;left:188"><nobr><b>EER(%</b></nobr></div>
+<div style="position:absolute;top:25474;left:227"><nobr><b>)</b></nobr></div>
+<div style="position:absolute;top:25437;left:337"><nobr><b>1</b></nobr></div>
+<div style="position:absolute;top:25437;left:447"><nobr><b>2</b></nobr></div>
+<div style="position:absolute;top:25437;left:564"><nobr><b>3</b></nobr></div>
+<div style="position:absolute;top:25437;left:691"><nobr><b>4</b></nobr></div>
+<div style="position:absolute;top:25437;left:813"><nobr><b>5</b></nobr></div>
+<div style="position:absolute;top:25437;left:930"><nobr><b>6</b></nobr></div>
+<div style="position:absolute;top:25437;left:1043"><nobr><b>7</b></nobr></div>
+<div style="position:absolute;top:25437;left:1144"><nobr><b>8</b></nobr></div>
+</span></font>
+<font size="4" face="Times"><span style="font-size:28px;font-family:Times">
+<div style="position:absolute;top:25520;left:192"><nobr>cosine 28.77 4.78 28.60 21.32 20.43 11.36 7.35 7.63</nobr></div>
+<div style="position:absolute;top:25567;left:204"><nobr>LDA</nobr></div>
+<div style="position:absolute;top:25558;left:302"><nobr>24.10 1.79 24.18 14.56 14.42 10.25 6.46 6.58</nobr></div>
+<div style="position:absolute;top:25614;left:196"><nobr>PLDA 20.09 2.09 20.43 17.87 13.34 8.37</nobr></div>
+<div style="position:absolute;top:25605;left:1017"><nobr>4.44 4.74</nobr></div>
+</span></font>
+<font size="4" color="#000000" face="Times"><span style="font-size:28px;font-family:Times;color:#000000">
+<div style="position:absolute;top:25633;left:67"><nobr>condition :</nobr></div>
+<div style="position:absolute;top:25669;left:67"><nobr>1 All trials involving only interview speech in training and test</nobr></div>
+<div style="position:absolute;top:25705;left:67"><nobr>2 All trials involving interview speech from the same microphone type in training</nobr></div>
+<div style="position:absolute;top:25741;left:67"><nobr>and test</nobr></div>
+<div style="position:absolute;top:25777;left:67"><nobr>3 All trials involving interview speech from different microphones types in training</nobr></div>
+<div style="position:absolute;top:25813;left:67"><nobr>and test</nobr></div>
+<div style="position:absolute;top:25849;left:67"><nobr>4 All trials involving interview training speech and telephone test speech</nobr></div>
+<div style="position:absolute;top:25885;left:67"><nobr>5 All trials involving telephone training speech and noninterview microphone test</nobr></div>
+<div style="position:absolute;top:25921;left:67"><nobr>speech</nobr></div>
+<div style="position:absolute;top:25957;left:67"><nobr>6 All trials involving only telephone speech in training and test</nobr></div>
+<div style="position:absolute;top:25993;left:67"><nobr>7 All trials involving only English language telephone speech in training and test</nobr></div>
+<div style="position:absolute;top:26029;left:67"><nobr>8 All trials involving only English language telephone speech spoken</nobr></div>
+</span></font>
+
+<div style="position:absolute;top:26095;left:0"><hr><table border="0" width="100%"><tbody><tr><td bgcolor="eeeeee" align="right"><font face="arial,sans-serif"><a name="33"><b>Page 33</b></a></font></td></tr></tbody></table></div><font size="7" color="#000000" face="Times"><span style="font-size:52px;font-family:Times;color:#000000">
+<div style="position:absolute;top:26181;left:38"><nobr>6 Some of my previous work</nobr></div>
+</span></font>
+<font size="3" face="Times"><span style="font-size:12px;font-family:Times">
+<div style="position:absolute;top:26858;left:191"><nobr>33</nobr></div>
+</span></font>
+<font size="5" color="#000000" face="Times"><span style="font-size:34px;font-family:Times;color:#000000">
+<div style="position:absolute;top:26309;left:84"><nobr>● Sequential Model adaptation for Speaker Verification</nobr></div>
+<div style="position:absolute;top:26374;left:84"><nobr>● Block-wise training for ivectors</nobr></div>
+<div style="position:absolute;top:26439;left:84"><nobr>● Phone-based alignment for channel robust speaker verification ……</nobr></div>
+<div style="position:absolute;top:26503;left:84"><nobr>● Mlp classification for ivector ……</nobr></div>
+<div style="position:absolute;top:26568;left:84"><nobr>● ……</nobr></div>
+</span></font>
+
+<div style="position:absolute;top:26905;left:0"><hr><table border="0" width="100%"><tbody><tr><td bgcolor="eeeeee" align="right"><font face="arial,sans-serif"><a name="34"><b>Page 34</b></a></font></td></tr></tbody></table></div><font size="4" color="#000000" face="Times"><span style="font-size:25px;font-family:Times;color:#000000">
+<div style="position:absolute;top:27025;left:50"><nobr>[1] S. Furui. Cepstral analysis technique for automatic speaker verification. IEEE Trans. Acoust. Speech Signal</nobr></div>
+<div style="position:absolute;top:27058;left:50"><nobr>Processing, 1981. 29(2):254-272.</nobr></div>
+<div style="position:absolute;top:27090;left:50"><nobr>[2] D.A. Reynolds. Channel robust speaker verification via feature mapping. In ICASSP, 2003, (2): 53-56.</nobr></div>
+<div style="position:absolute;top:27123;left:50"><nobr>[3] F. Bimbot, J. F. Bonastre, C. Fredouille, et al. A tutorial on text-independent speaker verification[J]. EURASIP</nobr></div>
+<div style="position:absolute;top:27155;left:50"><nobr>journal on applied signal processing, 2004, 2004: 430-451.</nobr></div>
+<div style="position:absolute;top:27187;left:50"><nobr>[3] F. K. Soong, A. E. Rosenberg, L. R. Rabiner, and B. H. Juang. A vector quantization approach to speaker</nobr></div>
+<div style="position:absolute;top:27220;left:50"><nobr>recognition. International Conference on Acoustics, Speech and Signal Processing. 1985, 387–390.</nobr></div>
+<div style="position:absolute;top:27252;left:50"><nobr>[4] A. Higgins, L. Bhaler, and J. Porter. Voice identification using nearest neighbor distance measure. International</nobr></div>
+<div style="position:absolute;top:27285;left:50"><nobr>Conference on Acoustics, Speech and Signal Processing. 1993, 375–378.</nobr></div>
+<div style="position:absolute;top:27317;left:50"><nobr>[5] Y. Bennani and P. Gallinari. On the use of tdnn-extracted features information in talker identication. International</nobr></div>
+<div style="position:absolute;top:27349;left:50"><nobr>Conference on Acoustics, Speech and Signal Processing. 1991, 385–388.</nobr></div>
+<div style="position:absolute;top:27382;left:50"><nobr>[6] K. R. Farrell, R. J. Mammone, and K.T. Assaleh. Speaker recognition using neural networks and conventional</nobr></div>
+<div style="position:absolute;top:27414;left:50"><nobr>classiers. IEEE Transactions on Speech and Audio Processing. 1994, 2:194–205.</nobr></div>
+<div style="position:absolute;top:27447;left:50"><nobr>[7] N. Dehak, P. Kenny, R. Dehak, et al. Front-end factor analysis for speaker verification[J]. Audio, Speech, and</nobr></div>
+<div style="position:absolute;top:27479;left:50"><nobr>Language Processing, IEEE Transactions on, 2011, 19(4): 788-798.</nobr></div>
+<div style="position:absolute;top:27511;left:50"><nobr>[8] A. Larcher, J. Bonastre and B. Fauve, et al. “ALIZE 3.0 - Open Source Toolkit for State-of-the-Art Speaker</nobr></div>
+<div style="position:absolute;top:27544;left:50"><nobr>Recognition”, in Proc. Interspeech 2013.</nobr></div>
+<div style="position:absolute;top:27576;left:50"><nobr>[9] P.-M. Bousquet, D. Matrouf, and J.-F. Bonastre, “Intersession compensation and scoring methods in the i-vectors</nobr></div>
+<div style="position:absolute;top:27609;left:50"><nobr>space for speaker recognition,” in Annual Conference of the International Speech Communication Association</nobr></div>
+<div style="position:absolute;top:27641;left:50"><nobr>(Interspeech), 2011, pp. 485– 488.</nobr></div>
+</span></font>
+<font size="7" color="#000000" face="Times"><span style="font-size:52px;font-family:Times;color:#000000">
+<div style="position:absolute;top:26944;left:573"><nobr>References</nobr></div>
+</span></font>
+
+<div style="position:absolute;top:27715;left:0"><hr><table border="0" width="100%"><tbody><tr><td bgcolor="eeeeee" align="right"><font face="arial,sans-serif"><a name="35"><b>Page 35</b></a></font></td></tr></tbody></table></div><font size="4" color="#000000" face="Times"><span style="font-size:25px;font-family:Times;color:#000000">
+<div style="position:absolute;top:27835;left:50"><nobr>[10] A. Hatch and A. Stolcke, “Generalized linear kernels for one-versus-all classification: application to speaker</nobr></div>
+<div style="position:absolute;top:27862;left:50"><nobr>recognition,” in to appear in proc. of ICASSP, Toulouse, France, 2006.</nobr></div>
+<div style="position:absolute;top:27900;left:50"><nobr>[11] A. Hatch, S. Kajarekar, and A. Stolcke, “Within-class covariance normalization for SVM-based speaker</nobr></div>
+<div style="position:absolute;top:27927;left:50"><nobr>recognition,” in Proc. Int. Conf. Spoken Lang. Process., Pittsburgh, PA, Sep. 2006.</nobr></div>
+<div style="position:absolute;top:27965;left:50"><nobr>[12] The NIST Year 2008 Speaker Recognition Evaluation Plan, http://www.nist.gov/speech/tests/spk/2008/sre-</nobr></div>
+<div style="position:absolute;top:27997;left:50"><nobr>08_evalplan-v9.pdf.</nobr></div>
+<div style="position:absolute;top:28030;left:50"><nobr>[13] W. M. Campbell, D. E. Sturim, D. A. Reynolds and A. Solomonoff. SVM based speaker verification using a GMM</nobr></div>
+<div style="position:absolute;top:28062;left:50"><nobr>supervector kernel and NAP variability compensation. ICASSP, 2006. 97-100</nobr></div>
+<div style="position:absolute;top:28095;left:50"><nobr>[14] S. J. Prince and J. H. Elder, “Probabilistic linear discriminant analysis for inferences about identity,” in</nobr></div>
+<div style="position:absolute;top:28127;left:50"><nobr>International Conference on Computer Vision. IEEE, 2007, pp. 1–8.</nobr></div>
+<div style="position:absolute;top:28159;left:50"><nobr>[15] K. Fukunaga, Introduction to Statistical Pattern Recognition. 2nd ed. New York: Academic Press, 1990, ch. 10.</nobr></div>
+</span></font>
+
+<div style="position:absolute;top:28525;left:0"><hr><table border="0" width="100%"><tbody><tr><td bgcolor="eeeeee" align="right"><font face="arial,sans-serif"><a name="36"><b>Page 36</b></a></font></td></tr></tbody></table></div><font size="16" color="#ffc000" face="Times"><span style="font-size:142px;font-family:Times;color:#ffc000">
+<div style="position:absolute;top:28747;left:260"><nobr>THANK YOU!</nobr></div>
+</span></font>
+<!-- t10473r441a63c10473e7118n2914u62l0m0k0 -->
+
+
+</div></body></html>
